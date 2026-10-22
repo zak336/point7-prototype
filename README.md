@@ -1,32 +1,31 @@
-# Point7 — Gemini-powered customer enquiry prototype
+# Point7 — Natural-language workflow builder (early prototype)
 
-This Streamlit prototype makes a real call to the Google Gemini Developer API to classify a customer enquiry, draft a reply, recommend a next action, and return structured JSON. No emails are sent and no inbox/CRM is connected.
+This version upgrades the Gemini-powered enquiry demo into a small reusable workflow builder.
 
-## Recommended model
+## What works
+- User describes an agent in natural language.
+- Gemini creates a structured workflow plan.
+- Point7 validates plan shape, supported operations, unique IDs, and sequential dependencies.
+- A reusable executor calls Gemini for each supported step and passes step outputs to downstream steps.
+- Step results/errors are shown and can be exported as JSON.
 
-Default: `gemini-3.1-flash-lite`, selected for cost efficiency and routine classification/drafting. Model availability and free-tier limits can change; verify the model is available in your Google AI Studio account. If unavailable, set `MODEL_NAME` to a supported Flash-Lite model shown in the official Gemini API model list.
+## Supported operations
+`classify_text`, `detect_urgency`, `analyze_sentiment`, `summarize_text`, `extract_fields`, `draft_reply`, `recommend_action`.
 
-## Deploy on Streamlit Community Cloud
+## Run locally
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
 
-1. Extract this ZIP.
-2. In the GitHub repository connected to your Streamlit app, replace `app.py` and `requirements.txt` with the files in `Point7_Real_Prototype/`.
-3. In Streamlit Community Cloud, open **App settings → Secrets** and add:
+Configure Streamlit Secrets or environment variables:
+```toml
+GEMINI_API_KEY = "your-key"
+MODEL_NAME = "gemini-3.1-flash-lite"
+```
 
-   ```toml
-   GEMINI_API_KEY = "your-Gemini-API-key"
-   MODEL_NAME = "gemini-3.1-flash-lite"
-   ```
+## Deploy to Streamlit Community Cloud
+Replace `app.py` and `requirements.txt` in the GitHub repository connected to your Streamlit app, commit/push to the configured branch, and let Streamlit redeploy. Keep the key in Streamlit Secrets, never in GitHub.
 
-4. Save secrets. Commit and push the updated files to the branch used by the app, then wait for redeployment.
-5. Run a test enquiry. Confirm the app shows a live result and model name.
-
-Create/check the API key in Google AI Studio: https://aistudio.google.com/apikey
-
-## Security and limitations
-
-- Never commit the API key to GitHub or paste it into chat.
-- Free tier has quotas/rate limits and may change; a free-tier key is not a guarantee of unlimited use.
-- Google documents that content on the Gemini API free tier may be used to improve its products. Do not submit real sensitive customer data on the free tier; use anonymized demo enquiries.
-- The app makes one model call per enquiry and validates the output structure. It does not verify factual correctness.
-- No email sending, inbox/CRM integration, order lookup, persistent database, multi-agent execution, or automatic model routing is implemented.
-- Keep human review before using any drafted reply.
+## Important limitations
+This is an early prototype. It only processes text pasted by the user and only executes the allowlisted operations. It does not connect to inboxes, send emails, execute arbitrary code, persist agents, or integrate external tools. Planning uses one Gemini request and every step uses another request; quotas and costs may apply. Review outputs for accuracy before use.

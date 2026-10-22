@@ -32,6 +32,7 @@ def config_value(key: str, default: str = "") -> str:
 
 API_KEY = config_value("GEMINI_API_KEY")
 MODEL_NAME = config_value("MODEL_NAME", "gemini-3.1-flash-lite")
+V_NAME = "V0.7"
 MAX_STEPS = 6
 
 
@@ -140,6 +141,8 @@ with st.sidebar:
     else:
         st.warning("Gemini API key not configured")
         st.caption("Add GEMINI_API_KEY in Streamlit → App settings → Secrets.")
+    st.divider()
+    st.caption(f"Version : {V_NAME}")
     st.divider()
     st.caption("Point7 uses Gemini to plan and execute a workflow through an allowlisted set of operations.")
     st.caption("Only user-supplied text is processed. No inbox, email sending, or external tools are connected.")

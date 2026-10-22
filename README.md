@@ -1,36 +1,32 @@
-# Point7 real AI workflow prototype
+# Point7 — Gemini-powered customer enquiry prototype
 
-This Streamlit app makes a live call to a provider that supports the OpenAI-compatible Chat Completions API. It classifies a customer enquiry, drafts a reply, recommends a next action, validates required fields, and allows JSON export. It does not send emails or connect to a real inbox/CRM.
+This Streamlit prototype makes a real call to the Google Gemini Developer API to classify a customer enquiry, draft a reply, recommend a next action, and return structured JSON. No emails are sent and no inbox/CRM is connected.
 
-## Configure Streamlit Community Cloud
+## Recommended model
 
-In your app's Streamlit Community Cloud page, open **App settings → Secrets** and add values from your provider dashboard:
+Default: `gemini-3.1-flash-lite`, selected for cost efficiency and routine classification/drafting. Model availability and free-tier limits can change; verify the model is available in your Google AI Studio account. If unavailable, set `MODEL_NAME` to a supported Flash-Lite model shown in the official Gemini API model list.
 
-```toml
-API_KEY = "your-secret-key"
-API_BASE_URL = "https://api.openai.com/v1"
-MODEL_NAME = "your-exact-model-id"
-```
+## Deploy on Streamlit Community Cloud
 
-- `API_KEY`: your provider's secret API key. Never commit it to GitHub or put it in app code.
-- `API_BASE_URL`: provider's API base URL, usually ending in `/v1` for OpenAI-compatible services. Do not include `/chat/completions` at the end.
-- `MODEL_NAME`: exact model identifier from the provider dashboard.
+1. Extract this ZIP.
+2. In the GitHub repository connected to your Streamlit app, replace `app.py` and `requirements.txt` with the files in `Point7_Real_Prototype/`.
+3. In Streamlit Community Cloud, open **App settings → Secrets** and add:
 
-The example URL is for OpenAI only. If you do not know the provider, check the website where the key was created and its API documentation. This build does not automatically support every provider. Anthropic's native API, for example, needs a different request adapter unless you use an OpenAI-compatible gateway.
+   ```toml
+   GEMINI_API_KEY = "your-Gemini-API-key"
+   MODEL_NAME = "gemini-3.1-flash-lite"
+   ```
 
-## Deploy the code
+4. Save secrets. Commit and push the updated files to the branch used by the app, then wait for redeployment.
+5. Run a test enquiry. Confirm the app shows a live result and model name.
 
-1. Back up the existing GitHub repository first.
-2. Replace the app's `app.py` with this `app.py` and update `requirements.txt` from this folder.
-3. Commit/push to the same branch and path used by Streamlit Community Cloud.
-4. Add the three Secrets values in the Streamlit app settings, then reboot/redeploy the app.
-5. Test with a sample customer enquiry. Confirm the app shows a real provider/model and a live result.
+Create/check the API key in Google AI Studio: https://aistudio.google.com/apikey
 
-## Local run
+## Security and limitations
 
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-For local development, put the same TOML keys in `.streamlit/secrets.toml` (do not commit that file) or export environment variables named `API_KEY`, `API_BASE_URL`, and `MODEL_NAME`.
+- Never commit the API key to GitHub or paste it into chat.
+- Free tier has quotas/rate limits and may change; a free-tier key is not a guarantee of unlimited use.
+- Google documents that content on the Gemini API free tier may be used to improve its products. Do not submit real sensitive customer data on the free tier; use anonymized demo enquiries.
+- The app makes one model call per enquiry and validates the output structure. It does not verify factual correctness.
+- No email sending, inbox/CRM integration, order lookup, persistent database, multi-agent execution, or automatic model routing is implemented.
+- Keep human review before using any drafted reply.
